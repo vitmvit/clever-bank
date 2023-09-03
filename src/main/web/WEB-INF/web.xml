@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                      http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+    <servlet>
+        <servlet-name>UserController</servlet-name>
+        <servlet-class>org.example.controller.UserController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UserController</servlet-name>
+        <url-pattern>/api/users/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>BankController</servlet-name>
+        <servlet-class>org.example.controller.BankController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BankController</servlet-name>
+        <url-pattern>/api/banks/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AccountController</servlet-name>
+        <servlet-class>org.example.controller.AccountController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AccountController</servlet-name>
+        <url-pattern>/api/accounts/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>TransactionController</servlet-name>
+        <servlet-class>org.example.controller.TransactionController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TransactionController</servlet-name>
+        <url-pattern>/api/transactions/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MoneyTransferController</servlet-name>
+        <servlet-class>org.example.controller.MoneyTransferController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MoneyTransferController</servlet-name>
+        <url-pattern>/api/transactions/transfer/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MoneyAddController</servlet-name>
+        <servlet-class>org.example.controller.MoneyAddController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MoneyAddController</servlet-name>
+        <url-pattern>/api/transactions/add/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MoneyRemoveController</servlet-name>
+        <servlet-class>org.example.controller.MoneyRemoveController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MoneyRemoveController</servlet-name>
+        <url-pattern>/api/transactions/remove/*</url-pattern>
+    </servlet-mapping>
+</web-app>
