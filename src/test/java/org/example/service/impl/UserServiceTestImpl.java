@@ -23,7 +23,7 @@ public class UserServiceTestImpl implements UserServiceTest {
     private final UserService userService = Mockito.mock(UserServiceImpl.class);
 
     @Test
-    public void findByIdPositive() {
+    public void findByIdPositiveTest() {
         UserResponseDto target = getUserResponseDto();
         when(userService.findById(1L)).thenReturn(target);
         UserResponseDto result = userService.findById(target.getId());
@@ -32,7 +32,7 @@ public class UserServiceTestImpl implements UserServiceTest {
     }
 
     @Test
-    public void findByIdNegative() {
+    public void findByIdNegativeTest() {
         when(userService.findById(anyLong())).thenThrow(new ConnectionException(CONNECTION_EXCEPTION_MESSAGE));
         var exception = Assertions.assertThrows(Exception.class, () -> {
             userService.findById(Long.MAX_VALUE);
@@ -41,7 +41,7 @@ public class UserServiceTestImpl implements UserServiceTest {
     }
 
     @Test
-    public void createPositive() {
+    public void createPositiveTest() {
         UserResponseDto target = getUserResponseDto();
         UserCreateDto userCreateDto = getUserCreateDto();
         when(userService.create(userCreateDto)).thenReturn(target);
@@ -51,7 +51,7 @@ public class UserServiceTestImpl implements UserServiceTest {
     }
 
     @Test
-    public void createNegative() {
+    public void createNegativeTest() {
         UserCreateDto target = new UserCreateDto(null);
         doThrow(RequestException.class).when(userService).create(target);
         var exception = Assertions.assertThrows(Exception.class,
@@ -60,7 +60,7 @@ public class UserServiceTestImpl implements UserServiceTest {
     }
 
     @Test
-    public void updatePositive() {
+    public void updatePositiveTest() {
         UserCreateDto accountCreateDto = getUserCreateDto();
         UserResponseDto saved = getUserResponseDto();
         when(userService.create(accountCreateDto)).thenReturn(saved);
@@ -73,7 +73,7 @@ public class UserServiceTestImpl implements UserServiceTest {
     }
 
     @Test
-    public void updateNegative() {
+    public void updateNegativeTest() {
         UserUpdateDto user = new UserUpdateDto();
         user.setId(null);
         user.setName(null);
@@ -85,7 +85,7 @@ public class UserServiceTestImpl implements UserServiceTest {
     }
 
     @Test
-    public void delete() {
+    public void deleteTest() {
         UserCreateDto userCreateDto = getUserCreateDto();
         UserResponseDto saved = getUserResponseDto();
         doReturn(saved).when(userService).create(userCreateDto);

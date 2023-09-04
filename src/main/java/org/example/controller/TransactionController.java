@@ -44,17 +44,17 @@ public class TransactionController extends HttpServlet {
     }
 
     @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String id = request.getParameter("id");
         try {
-            StringBuffer jb = new StringBuffer();
-            String line = null;
+            StringBuffer stringBuffer = new StringBuffer();
+            String line;
             BufferedReader reader = request.getReader();
             while ((line = reader.readLine()) != null) {
-                jb.append(line);
+                stringBuffer.append(line);
             }
             ObjectMapper mapper = new ObjectMapper();
-            TransactionUpdateDto transactionUpdateDto = mapper.readValue(jb.toString(), TransactionUpdateDto.class);
+            TransactionUpdateDto transactionUpdateDto = mapper.readValue(stringBuffer.toString(), TransactionUpdateDto.class);
             transactionUpdateDto.setId(Long.valueOf(id));
             TransactionResponseDto transactionResponseDto = transactionService.update(transactionUpdateDto);
             String json = mapper.writeValueAsString(transactionResponseDto);
@@ -62,25 +62,21 @@ public class TransactionController extends HttpServlet {
             out.print(json);
         } catch (Exception e) {
             PrintWriter out = response.getWriter();
-            out.print("Account updated error!");
+            out.print("Account update error");
         }
     }
 
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             String id = request.getParameter("id");
-
             transactionService.delete(Long.valueOf(id));
-
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
-
             PrintWriter writer = response.getWriter();
             writer.println("Transaction is deleted");
-
         } catch (Exception e) {
             PrintWriter out = response.getWriter();
-            out.print("Transaction deleted error!");
+            out.print("Transaction deletion error");
         }
     }
 }

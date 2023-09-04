@@ -17,7 +17,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet //(name = "BankServlet", urlPatterns = "/api/banks")
+@WebServlet
 public class BankController extends HttpServlet {
 
     private final BankService bankService = new BankServiceImpl();
@@ -44,37 +44,40 @@ public class BankController extends HttpServlet {
         }
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            StringBuffer jb = new StringBuffer();
-            String line = null;
+            StringBuffer stringBuffer = new StringBuffer();
+            String line;
             BufferedReader reader = request.getReader();
-            while ((line = reader.readLine()) != null)
-                jb.append(line);
+            while ((line = reader.readLine()) != null) {
+                stringBuffer.append(line);
+            }
             ObjectMapper mapper = new ObjectMapper();
-            BankCreateDto bankCreateDto = mapper.readValue(jb.toString(), BankCreateDto.class);
+            BankCreateDto bankCreateDto = mapper.readValue(stringBuffer.toString(), BankCreateDto.class);
             BankResponseDto bankResponseDto = bankService.create(bankCreateDto);
             String json = mapper.writeValueAsString(bankResponseDto);
             PrintWriter out = response.getWriter();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
             out.print(json);
         } catch (Exception e) {
             PrintWriter out = response.getWriter();
-            out.print("Bank created error!");
+            out.print("Bank creation error!");
         }
     }
 
     @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String id = request.getParameter("id");
         try {
-            StringBuffer jb = new StringBuffer();
-            String line = null;
+            StringBuffer stringBuffer = new StringBuffer();
+            String line;
             BufferedReader reader = request.getReader();
             while ((line = reader.readLine()) != null) {
-                jb.append(line);
+                stringBuffer.append(line);
             }
             ObjectMapper mapper = new ObjectMapper();
-            BankUpdateDto bankUpdateDto = mapper.readValue(jb.toString(), BankUpdateDto.class);
+            BankUpdateDto bankUpdateDto = mapper.readValue(stringBuffer.toString(), BankUpdateDto.class);
             bankUpdateDto.setId(Long.valueOf(id));
             BankResponseDto accountResponseDto = bankService.update(bankUpdateDto);
             String json = mapper.writeValueAsString(accountResponseDto);
@@ -82,25 +85,21 @@ public class BankController extends HttpServlet {
             out.print(json);
         } catch (Exception e) {
             PrintWriter out = response.getWriter();
-            out.print("Bank updated error!");
+            out.print("Bank update error");
         }
     }
 
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             String id = request.getParameter("id");
-
             bankService.delete(Long.valueOf(id));
-
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
-
             PrintWriter writer = response.getWriter();
             writer.println("Bank is deleted");
-
         } catch (Exception e) {
             PrintWriter out = response.getWriter();
-            out.print("Bank deleted error!");
+            out.print("Bank deletion error!");
         }
     }
 }

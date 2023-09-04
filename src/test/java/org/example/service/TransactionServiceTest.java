@@ -1,47 +1,29 @@
 package org.example.service;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public interface TransactionServiceTest {
-    // TODO: упал
-    @Test
-    void findByIdPositive();
 
-    @Test
-    void findByIdNegative();
+    void findByIdPositiveTest();
 
-    // TODO: упал
-    @Test
-    void getAllTransactionsByUserIdPositive();
+    void findByIdNegativeTest();
 
-    @Test
-    void getAllTransactionsByUserIdNegative();
+    void getAllTransactionsByUserIdPositiveTest();
 
-    // TODO: упал
-    @Test
-    void getAllTransactionsByDatePositive();
+    void getAllTransactionsByUserIdNegativeTest();
 
-    // TODO: упал
-    @Test
-    void getAllTransactionsByDateNegative();
+    void getAllTransactionsByDatePositiveTest();
 
-    // TODO: упал
-    @Test
-    void createPositive();
+    void getAllTransactionsByDateNegativeTest();
 
-    @Test
-    void createNegative();
+    void createPositiveTest();
 
-    // TODO: упал
-    @Test
-    void updatePositive();
+    void createNegativeTest();
 
-    @Test
-    void updateNegative();
+    void updatePositiveTest();
 
-    // TODO: упал
-    @Test
-    void delete();
+    void updateNegativeTest();
+
+    void deleteTest();
 }

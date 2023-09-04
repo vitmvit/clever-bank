@@ -1,29 +1,21 @@
 package org.example.repository;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public interface AccountRepositoryTest {
 
-    @Test
-    void findByIdPositive();
+    void findByIdPositiveTest();
 
-    @Test
-    void findByIdNegative();
+    void findByIdNegativeTest();
 
-    @Test
-    void create();
+    void createTest();
 
-    @Test
-    void update();
+    void updateTest();
 
-    @Test
-    void delete();
+    void deleteTest();
 
-    @Test
-    void moneyTransferPositive();
+    void moneyTransferPositiveTest();
 
-    @Test
-    void moneyTransferNegative();
+    void moneyTransferNegativeTest();
 }

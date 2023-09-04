@@ -14,6 +14,8 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.util.Optional;
 
+import static org.example.model.constant.Constants.*;
+
 public class AccountRepositoryImpl implements AccountRepository {
 
     private final Optional<Connection> connection;
@@ -59,7 +61,7 @@ public class AccountRepositoryImpl implements AccountRepository {
                     return findById(rs.getLong(1));
                 }
             } catch (SQLException ex) {
-                throw new EntityNotFoundException("Account not found");
+                throw new EntityNotFoundException(ACCOUNT_NOT_FOUND_MESSAGE);
             }
         }
         throw new ConnectionException();
@@ -77,7 +79,7 @@ public class AccountRepositoryImpl implements AccountRepository {
                 ps.executeUpdate();
                 return findById(account.getId());
             } catch (SQLException ex) {
-                System.out.println("Error query");
+                System.out.println(QUERY_ERROR);
             }
         }
         throw new ConnectionException();
@@ -91,7 +93,7 @@ public class AccountRepositoryImpl implements AccountRepository {
                 ps.setLong(1, id);
                 ps.executeUpdate();
             } catch (SQLException ex) {
-                System.out.println("Error query");
+                System.out.println(QUERY_ERROR);
             }
         }
     }
@@ -117,7 +119,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         Account accountFrom = findById(idFrom);
         BigDecimal difference = accountFrom.getBalance().subtract(transaction.getSum());
         if (difference.compareTo(BigDecimal.ZERO) < 0) {
-            throw new RuntimeException("Недостаточно средств на счете");
+            throw new RuntimeException(INSUFFICIENT_FUNDS_MESSAGE);
         }
         accountFrom.setBalance(accountFrom.getBalance().subtract(transaction.getSum()));
         update(accountFrom);
@@ -137,7 +139,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         Account accountFrom = findById(idFrom);
         BigDecimal difference = accountFrom.getBalance().subtract(transaction.getSum());
         if (difference.compareTo(BigDecimal.ZERO) < 0) {
-            throw new RuntimeException("Недостаточно средств на счете");
+            throw new RuntimeException(INSUFFICIENT_FUNDS_MESSAGE);
         }
         Account accountTo = findById(transaction.getRecipientAccountId());
         accountFrom.setBalance(accountFrom.getBalance().subtract(transaction.getSum()));

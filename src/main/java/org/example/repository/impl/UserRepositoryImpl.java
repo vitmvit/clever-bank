@@ -8,6 +8,8 @@ import org.example.repository.UserRepository;
 import java.sql.*;
 import java.util.Optional;
 
+import static org.example.model.constant.Constants.QUERY_ERROR;
+
 
 public class UserRepositoryImpl implements UserRepository {
 
@@ -31,7 +33,7 @@ public class UserRepositoryImpl implements UserRepository {
                     return result;
                 }
             } catch (SQLException ex) {
-                System.out.println("Error query");
+                System.out.println(QUERY_ERROR);
             }
         }
         throw new ConnectionException();
@@ -49,7 +51,7 @@ public class UserRepositoryImpl implements UserRepository {
                     return findById(rs.getLong(1));
                 }
             } catch (SQLException ex) {
-                System.out.println("Error query");
+                System.out.println(QUERY_ERROR);
             }
         }
         throw new ConnectionException();
@@ -65,7 +67,7 @@ public class UserRepositoryImpl implements UserRepository {
                 ps.executeUpdate();
                 return findById(user.getId());
             } catch (SQLException ex) {
-                System.out.println("Error query");
+                System.out.println(QUERY_ERROR);
             }
         }
         throw new ConnectionException();
@@ -79,7 +81,7 @@ public class UserRepositoryImpl implements UserRepository {
                 ps.setLong(1, id);
                 ps.executeUpdate();
             } catch (SQLException ex) {
-                System.out.println("Error query");
+                System.out.println(QUERY_ERROR);
             }
         }
     }

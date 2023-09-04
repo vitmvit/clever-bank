@@ -36,7 +36,7 @@ public class MoneyRemoveController extends HttpServlet {
             accountService.moneyRemove(moneyOperationDto);
         } catch (Exception e) {
             PrintWriter out = response.getWriter();
-            out.print("Money remove error!");
+            out.print("Money remove error");
         }
     }
 }

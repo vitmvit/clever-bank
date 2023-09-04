@@ -54,7 +54,7 @@ CREATE SEQUENCE transaction_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854
 CREATE TABLE "public"."transaction"
 (
     "id"                   bigint DEFAULT nextval('transaction_id_seq') NOT NULL,
-    "type"                 text                                         NOT NULL,
+    "t_type"               text                                         NOT NULL,
     "bank_id"              bigint                                       NOT NULL,
     "sender_account_id"    bigint                                       NOT NULL,
     "recipient_account_id" bigint,
@@ -63,7 +63,7 @@ CREATE TABLE "public"."transaction"
     CONSTRAINT "transaction_pkey" PRIMARY KEY ("id")
 ) WITH (oids = false);
 
-INSERT INTO "transaction" ("id", "type", "bank_id", "sender_account_id", "recipient_account_id", "date_transaction",
+INSERT INTO "transaction" ("id", "t_type", "bank_id", "sender_account_id", "recipient_account_id", "date_transaction",
                            "sum")
 VALUES (1, 'A', 1, 1, NULL, '2023-09-03', 100),
        (4, 'A', 3, 3, NULL, '2023-09-03', 70),

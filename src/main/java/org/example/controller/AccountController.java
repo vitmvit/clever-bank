@@ -17,6 +17,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import static org.example.model.constant.Constants.ACCOUNT_NOT_FOUND_MESSAGE;
+
 @WebServlet
 public class AccountController extends HttpServlet {
     private final AccountService accountService = new AccountServiceImpl();
@@ -39,68 +41,68 @@ public class AccountController extends HttpServlet {
             out.flush();
         } catch (Exception e) {
             PrintWriter out = response.getWriter();
-            out.print("Account not found");
+            out.print(ACCOUNT_NOT_FOUND_MESSAGE);
         }
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            StringBuffer jb = new StringBuffer();
-            String line = null;
+            StringBuffer stringBuffer = new StringBuffer();
+            String line;
             BufferedReader reader = request.getReader();
             while ((line = reader.readLine()) != null) {
-                jb.append(line);
+                stringBuffer.append(line);
             }
             ObjectMapper mapper = new ObjectMapper();
-            AccountCreateDto accountCreateDto = mapper.readValue(jb.toString(), AccountCreateDto.class);
+            AccountCreateDto accountCreateDto = mapper.readValue(stringBuffer.toString(), AccountCreateDto.class);
             AccountResponseDto accountResponseDto = accountService.create(accountCreateDto);
             String json = mapper.writeValueAsString(accountResponseDto);
             PrintWriter out = response.getWriter();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
             out.print(json);
         } catch (Exception e) {
             PrintWriter out = response.getWriter();
-            out.print("Account created error!");
+            out.print("Account creation error");
         }
     }
 
     @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String id = request.getParameter("id");
         try {
-            StringBuffer jb = new StringBuffer();
-            String line = null;
+            StringBuffer stringBuffer = new StringBuffer();
+            String line;
             BufferedReader reader = request.getReader();
             while ((line = reader.readLine()) != null) {
-                jb.append(line);
+                stringBuffer.append(line);
             }
             ObjectMapper mapper = new ObjectMapper();
-            AccountUpdateDto accountUpdateDto = mapper.readValue(jb.toString(), AccountUpdateDto.class);
+            AccountUpdateDto accountUpdateDto = mapper.readValue(stringBuffer.toString(), AccountUpdateDto.class);
             accountUpdateDto.setId(Long.valueOf(id));
             AccountResponseDto accountResponseDto = accountService.update(accountUpdateDto);
             String json = mapper.writeValueAsString(accountResponseDto);
             PrintWriter out = response.getWriter();
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
             out.print(json);
         } catch (Exception e) {
             PrintWriter out = response.getWriter();
-            out.print("Account updated error!");
+            out.print("Account update error!");
         }
     }
 
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             String id = request.getParameter("id");
-
             accountService.delete(Long.valueOf(id));
-
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
-
             PrintWriter writer = response.getWriter();
             writer.println("Account is deleted");
-
         } catch (Exception e) {
             PrintWriter out = response.getWriter();
-            out.print("Account deleted error!");
+            out.print("Account deletion error");
         }
     }
 }

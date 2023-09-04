@@ -11,6 +11,8 @@ import org.example.repository.impl.UserRepositoryImpl;
 import org.example.service.UserService;
 import org.example.util.StringUtils;
 
+import static org.example.model.constant.Constants.REQUEST_EXCEPTION_MESSAGE;
+
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository = new UserRepositoryImpl();
@@ -25,7 +27,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto create(UserCreateDto userCreateDto) {
         if (StringUtils.isEmpty(userCreateDto.name())) {
-            throw new RequestException("Name is empty");
+            throw new RequestException(REQUEST_EXCEPTION_MESSAGE);
         }
         User user = userConverter.convert(userCreateDto);
         User saved = userRepository.create(user);
@@ -35,7 +37,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto update(UserUpdateDto userUpdateDto) {
         if (StringUtils.isEmpty(userUpdateDto.getName())) {
-            throw new RequestException("String is empty");
+            throw new RequestException(REQUEST_EXCEPTION_MESSAGE);
         }
         User user = userConverter.convert(userUpdateDto);
         User saved = userRepository.update(user);

@@ -14,13 +14,15 @@ public class UserRepositoryTestImpl implements UserRepositoryTest {
     private final UserRepository userRepository = new UserRepositoryImpl();
 
     @Test
-    public void findByIdPositive() {
+    public void findByIdPositiveTest() {
         User user = userRepository.create(getUser());
         Assertions.assertNotNull(userRepository.findById(user.getId()));
+
+        userRepository.delete(user.getId());
     }
 
     @Test
-    public void findByIdNegative() {
+    public void findByIdNegativeTest() {
         ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
             userRepository.findById(Long.MAX_VALUE);
         });
@@ -28,31 +30,37 @@ public class UserRepositoryTestImpl implements UserRepositoryTest {
     }
 
     @Test
-    public void create() {
+    public void createTest() {
         User userCreate = getUser();
         User saved = userRepository.create(getUser());
         Assertions.assertNotNull(saved.getId());
         Assertions.assertEquals(userCreate.getName(), saved.getName());
+
+        userRepository.delete(saved.getId());
     }
 
     @Test
-    public void update() {
+    public void updateTest() {
         User saved = userRepository.create(getUser());
         User user = new User();
         user.setId(saved.getId());
         user.setName("User_1");
         User updated = userRepository.update(user);
         Assertions.assertNotEquals(saved.getName(), updated.getName());
+
+        userRepository.delete(saved.getId());
     }
 
     @Test
-    public void delete() {
+    public void deleteTest() {
         User saved = userRepository.create(getUser());
         userRepository.delete(saved.getId());
         ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
             userRepository.findById(saved.getId());
         });
         Assertions.assertTrue(exception.getMessage().startsWith(CONNECTION_EXCEPTION_MESSAGE));
+
+        userRepository.delete(saved.getId());
     }
 
     private User getUser() {

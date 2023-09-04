@@ -1,37 +1,25 @@
 package org.example.repository;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public interface TransactionRepositoryTest {
 
-    @Test
-    void findByIdPositive();
+    void findByIdPositiveTest();
 
-    @Test
-    void findByIdNegative();
+    void findByIdNegativeTest();
 
-    // TODO: упал
-    @Test
-    void getAllTransactionsByUserIdPositive();
+    void getAllTransactionsByUserIdPositiveTest();
 
-    @Test
-    void getAllTransactionsByUserIdNegative();
+    void getAllTransactionsByUserIdNegativeTest();
 
-    @Test
-    void getAllTransactionsByDatePositive();
+    void getAllTransactionsByDatePositiveTest();
 
-    @Test
-    void getAllTransactionsByDateNegative();
+    void getAllTransactionsByDateNegativeTest();
 
-    @Test
-    void create();
+    void createTest();
 
-    // TODO: упал
-    @Test
-    void update();
+    void updateTest();
 
-    @Test
-    void delete();
+    void deleteTest();
 }

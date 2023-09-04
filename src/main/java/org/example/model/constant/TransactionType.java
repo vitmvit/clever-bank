@@ -4,9 +4,9 @@ import lombok.Getter;
 
 public enum TransactionType {
 
-    ADD("A"),
-    REMOVE("R"),
-    TRANSFER("T");
+    A("A"), // add money
+    R("R"), // remove money
+    T("T"); // transfer money
 
     @Getter
     private String name;

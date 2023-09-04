@@ -15,26 +15,29 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.example.model.constant.Constants.CONNECTION_EXCEPTION_MESSAGE;
+import static org.example.model.constant.Constants.REQUEST_EXCEPTION_MESSAGE;
+
 class TransactionServiceTestImpl implements TransactionServiceTest {
 
     private final TransactionService transactionService = new TransactionServiceImpl();
 
     @Test
-    public void findByIdPositive() {
+    public void findByIdPositiveTest() {
         TransactionResponseDto transactionResponseDto = transactionService.create(getTransaction());
         Assertions.assertNotNull(transactionService.findById(transactionResponseDto.getId()));
     }
 
     @Test
-    public void findByIdNegative() {
+    public void findByIdNegativeTest() {
         ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
             transactionService.findById(Long.MAX_VALUE);
         });
-        Assertions.assertTrue(exception.getMessage().startsWith("Connection is lost"));
+        Assertions.assertTrue(exception.getMessage().startsWith(CONNECTION_EXCEPTION_MESSAGE));
     }
 
     @Test
-    public void getAllTransactionsByUserIdPositive() {
+    public void getAllTransactionsByUserIdPositiveTest() {
         List<TransactionResponseDto> list = new ArrayList<>();
         list.add(transactionService.create(getTransaction()));
         list.add(transactionService.create(getTransaction()));
@@ -46,14 +49,14 @@ class TransactionServiceTestImpl implements TransactionServiceTest {
     }
 
     @Test
-    public void getAllTransactionsByUserIdNegative() {
+    public void getAllTransactionsByUserIdNegativeTest() {
         Long id = Long.MAX_VALUE;
         List<TransactionResponseDto> list = transactionService.getAllTransactionsByUserId(id);
         Assertions.assertEquals(0, list.size());
     }
 
     @Test
-    public void getAllTransactionsByDatePositive() {
+    public void getAllTransactionsByDatePositiveTest() {
         List<TransactionResponseDto> list = new ArrayList<>();
         list.add(transactionService.create(getTransaction()));
         list.add(transactionService.create(getTransaction()));
@@ -65,14 +68,14 @@ class TransactionServiceTestImpl implements TransactionServiceTest {
     }
 
     @Test
-    public void getAllTransactionsByDateNegative() {
+    public void getAllTransactionsByDateNegativeTest() {
         Date date = new Date(1212121212121L);
         List<TransactionResponseDto> list = transactionService.getAllTransactionsByDate(date);
         Assertions.assertEquals(0, list.size());
     }
 
     @Test
-    public void createPositive() {
+    public void createPositiveTest() {
         MoneyOperationDto moneyOperationDto = getTransaction();
         TransactionResponseDto transactionResponseDto = transactionService.create(moneyOperationDto);
         Assertions.assertNotNull(transactionResponseDto.getId());
@@ -80,16 +83,16 @@ class TransactionServiceTestImpl implements TransactionServiceTest {
     }
 
     @Test
-    public void createNegative() {
+    public void createNegativeTest() {
         MoneyOperationDto moneyOperationDto = new MoneyOperationDto(null, null, null, null, null);
         RequestException exception = Assertions.assertThrows(RequestException.class, () -> {
             transactionService.create(moneyOperationDto);
         });
-        Assertions.assertTrue(exception.getMessage().startsWith("String is empty"));
+        Assertions.assertTrue(exception.getMessage().startsWith(REQUEST_EXCEPTION_MESSAGE));
     }
 
     @Test
-    public void updatePositive() {
+    public void updatePositiveTest() {
         MoneyOperationDto accountCreateDto = getTransaction();
 
         TransactionResponseDto saved = transactionService.create(accountCreateDto);
@@ -107,7 +110,7 @@ class TransactionServiceTestImpl implements TransactionServiceTest {
     }
 
     @Test
-    public void updateNegative() {
+    public void updateNegativeTest() {
         TransactionUpdateDto transaction = new TransactionUpdateDto();
         transaction.setId(null);
         transaction.setBankId(null);
@@ -119,17 +122,17 @@ class TransactionServiceTestImpl implements TransactionServiceTest {
         RequestException exception = Assertions.assertThrows(RequestException.class, () -> {
             transactionService.update(transaction);
         });
-        Assertions.assertTrue(exception.getMessage().startsWith("String is empty"));
+        Assertions.assertTrue(exception.getMessage().startsWith(REQUEST_EXCEPTION_MESSAGE));
     }
 
     @Test
-    public void delete() {
+    public void deleteTest() {
         TransactionResponseDto saved = transactionService.create(getTransaction());
         transactionService.delete(saved.getId());
         ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
             transactionService.findById(saved.getId());
         });
-        Assertions.assertTrue(exception.getMessage().startsWith("Connection is lost"));
+        Assertions.assertTrue(exception.getMessage().startsWith(CONNECTION_EXCEPTION_MESSAGE));
     }
 
     private MoneyOperationDto getTransaction() {

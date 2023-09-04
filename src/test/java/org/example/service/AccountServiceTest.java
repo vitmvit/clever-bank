@@ -1,37 +1,25 @@
 package org.example.service;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public interface AccountServiceTest {
 
-    @Test
-    void findByIdPositive();
+    void findByIdPositiveTest();
 
-    @Test
-    void findByIdNegative();
+    void findByIdNegativeTest();
 
-    @Test
-    void createPositive();
+    void createPositiveTest();
 
-    @Test
-    void createNegative();
+    void createNegativeTest();
 
-    @Test
-    void updatePositive();
+    void updatePositiveTest();
 
-    @Test
-    void updateNegative();
+    void updateNegativeTest();
 
-    @Test
-    void delete();
+    void deleteTest();
 
-    // TODO: упал
-    @Test
-    void moneyTransferPositive();
+    void moneyTransferPositiveTest();
 
-    // TODO: упал
-    @Test
-    void moneyTransferNegative();
+    void moneyTransferNegativeTest();
 }

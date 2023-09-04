@@ -22,7 +22,7 @@ class BankServiceTestImpl implements BankServiceTest {
     private final BankService bankService = Mockito.mock(BankServiceImpl.class);
 
     @Test
-    public void findByIdPositive() {
+    public void findByIdPositiveTest() {
         BankResponseDto target = getBankResponseDto();
         when(bankService.findById(1L)).thenReturn(target);
         BankResponseDto result = bankService.findById(target.getId());
@@ -31,7 +31,7 @@ class BankServiceTestImpl implements BankServiceTest {
     }
 
     @Test
-    public void findByIdNegative() {
+    public void findByIdNegativeTest() {
         when(bankService.findById(anyLong())).thenThrow(new ConnectionException(CONNECTION_EXCEPTION_MESSAGE));
         var exception = Assertions.assertThrows(Exception.class, () -> {
             bankService.findById(Long.MAX_VALUE);
@@ -40,7 +40,7 @@ class BankServiceTestImpl implements BankServiceTest {
     }
 
     @Test
-    public void createPositive() {
+    public void createPositiveTest() {
         BankResponseDto target = getBankResponseDto();
         BankCreateDto userCreateDto = getBankCreateDto();
         when(bankService.create(userCreateDto)).thenReturn(target);
@@ -50,7 +50,7 @@ class BankServiceTestImpl implements BankServiceTest {
     }
 
     @Test
-    public void createNegative() {
+    public void createNegativeTest() {
         BankCreateDto target = new BankCreateDto(null);
         doThrow(RequestException.class).when(bankService).create(target);
         var exception = Assertions.assertThrows(Exception.class,
@@ -59,7 +59,7 @@ class BankServiceTestImpl implements BankServiceTest {
     }
 
     @Test
-    public void updatePositive() {
+    public void updatePositiveTest() {
         BankCreateDto bankCreateDto = getBankCreateDto();
         BankResponseDto saved = getBankResponseDto();
         when(bankService.create(bankCreateDto)).thenReturn(saved);
@@ -72,7 +72,7 @@ class BankServiceTestImpl implements BankServiceTest {
     }
 
     @Test
-    public void updateNegative() {
+    public void updateNegativeTest() {
         BankUpdateDto bankUpdateDto = new BankUpdateDto();
         bankUpdateDto.setId(null);
         bankUpdateDto.setName(null);
@@ -84,7 +84,7 @@ class BankServiceTestImpl implements BankServiceTest {
     }
 
     @Test
-    public void delete() {
+    public void deleteTest() {
         BankCreateDto bankCreateDto = getBankCreateDto();
         BankResponseDto saved = getBankResponseDto();
         doReturn(saved).when(bankService).create(bankCreateDto);

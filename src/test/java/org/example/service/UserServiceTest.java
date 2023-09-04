@@ -5,17 +5,17 @@ import org.junit.jupiter.api.TestInstance;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public interface UserServiceTest {
 
-    void findByIdPositive();
+    void findByIdPositiveTest();
 
-    void findByIdNegative();
+    void findByIdNegativeTest();
 
-    void createPositive();
+    void createPositiveTest();
 
-    void createNegative();
+    void createNegativeTest();
 
-    void updatePositive();
+    void updatePositiveTest();
 
-    void updateNegative();
+    void updateNegativeTest();
 
-    void delete();
+    void deleteTest();
 }

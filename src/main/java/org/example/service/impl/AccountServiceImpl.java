@@ -16,16 +16,17 @@ import org.example.repository.TransactionRepository;
 import org.example.repository.impl.AccountRepositoryImpl;
 import org.example.repository.impl.TransactionRepositoryImpl;
 import org.example.service.AccountService;
-import org.example.service.ReceiptService;
 import org.example.util.EntityUtils;
 
 import java.util.Date;
+
+import static org.example.model.constant.Constants.REQUEST_EXCEPTION_MESSAGE;
 
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository = new AccountRepositoryImpl();
     private final TransactionRepository transactionRepository = new TransactionRepositoryImpl();
-    private final ReceiptService receiptService = new ReceiptService();
+    private final ReceiptServiceImpl receiptService = new ReceiptServiceImpl();
     private final AccountConverter accountConverter = new AccountConverter();
     private final TransactionConverter transactionConverter = new TransactionConverter();
 
@@ -38,7 +39,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountResponseDto create(AccountCreateDto accountCreateDto) {
         if (EntityUtils.isEmpty(accountCreateDto.bankId()) || EntityUtils.isEmpty(accountCreateDto.userId())) {
-            throw new RequestException("String is empty");
+            throw new RequestException(REQUEST_EXCEPTION_MESSAGE);
         }
         Account account = accountConverter.convert(accountCreateDto);
         Account saved = accountRepository.create(account);
@@ -48,7 +49,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountResponseDto update(AccountUpdateDto accountUpdateDto) {
         if (EntityUtils.isEmpty(accountUpdateDto.getBankId()) || EntityUtils.isEmpty(accountUpdateDto.getUserId())) {
-            throw new RequestException("String is empty");
+            throw new RequestException(REQUEST_EXCEPTION_MESSAGE);
         }
         Account account = accountConverter.convert(accountUpdateDto);
         Account saved = accountRepository.update(account);
@@ -63,7 +64,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void moneyAdd(MoneyOperationDto moneyOperationDto) {
         Receipt receipt = accountRepository.moneyAdd(transactionConverter.convert(moneyOperationDto));
-        Transaction transaction = transactionCreate(TransactionType.ADD, moneyOperationDto);
+        Transaction transaction = transactionCreate(TransactionType.A, moneyOperationDto);
         receipt.setNumber(transaction.getId());
         receiptService.createReceipt(receipt);
     }
@@ -71,7 +72,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void moneyRemove(MoneyOperationDto moneyOperationDto) {
         Receipt receipt = accountRepository.moneyRemove(transactionConverter.convert(moneyOperationDto));
-        Transaction transaction = transactionCreate(TransactionType.REMOVE, moneyOperationDto);
+        Transaction transaction = transactionCreate(TransactionType.R, moneyOperationDto);
         receipt.setNumber(transaction.getId());
         receiptService.createReceipt(receipt);
     }
@@ -79,7 +80,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public void moneyTransfer(MoneyOperationDto moneyOperationDto) {
         Receipt receipt = accountRepository.moneyTransfer(transactionConverter.convert(moneyOperationDto));
-        Transaction transaction = transactionCreate(TransactionType.TRANSFER, moneyOperationDto);
+        Transaction transaction = transactionCreate(TransactionType.T, moneyOperationDto);
         receipt.setNumber(transaction.getId());
         receiptService.createReceipt(receipt);
     }

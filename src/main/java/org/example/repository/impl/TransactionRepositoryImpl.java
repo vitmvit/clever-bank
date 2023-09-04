@@ -13,6 +13,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static org.example.model.constant.Constants.QUERY_ERROR;
+import static org.example.model.constant.Constants.TRANSACTION_NOT_FOUND_MESSAGE;
+
 public class TransactionRepositoryImpl implements TransactionRepository {
 
     private final Optional<Connection> connection;
@@ -24,14 +27,14 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     @Override
     public Transaction findById(Long id) {
         if (connection.isPresent()) {
-            String sql = "SELECT id, type, bank_id, sender_account_id, recipient_account_id, date_transaction, sum FROM transaction WHERE id = ?";
+            String sql = "SELECT id, t_type, bank_id, sender_account_id, recipient_account_id, date_transaction, sum FROM transaction WHERE id = ?";
             try (PreparedStatement ps = connection.get().prepareStatement(sql)) {
                 ps.setLong(1, id);
                 ResultSet rs = ps.executeQuery();
                 if (rs.next()) {
                     Transaction result = new Transaction();
                     result.setId(rs.getLong("id"));
-                    result.setType(TransactionType.valueOf(rs.getString("type")));
+                    result.setType(TransactionType.valueOf(rs.getString("t_type")));
                     result.setBankId(rs.getLong("bank_id"));
                     result.setSenderAccountId(rs.getLong("sender_account_id"));
                     result.setRecipientAccountId(rs.getLong("recipient_account_Id"));
@@ -40,7 +43,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                     return result;
                 }
             } catch (SQLException ex) {
-                System.out.println("Error query");
+                System.out.println(QUERY_ERROR);
             }
         }
         throw new ConnectionException();
@@ -50,7 +53,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     @Override
     public List<Transaction> getAllTransactionsByUserId(Long id) {
         if (connection.isPresent()) {
-            String sql = "SELECT id, type, bank_id, sender_account_id, recipient_account_id, date_transaction, sum FROM transaction WHERE sender_account_id = ?";
+            String sql = "SELECT id, t_type, bank_id, sender_account_id, recipient_account_id, date_transaction, sum FROM transaction WHERE sender_account_id = ?";
             try (PreparedStatement ps = connection.get().prepareStatement(sql)) {
                 ps.setLong(1, id);
                 ResultSet rs = ps.executeQuery();
@@ -58,7 +61,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                 while (rs.next()) {
                     Transaction result = new Transaction();
                     result.setId(rs.getLong("id"));
-                    result.setType(TransactionType.valueOf(rs.getString("type")));
+                    result.setType(TransactionType.valueOf(rs.getString("t_type")));
                     result.setBankId(rs.getLong("bank_id"));
                     result.setSenderAccountId(rs.getLong("sender_account_id"));
                     result.setRecipientAccountId(rs.getLong("recipient_account_id"));
@@ -68,7 +71,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                 }
                 return transactions;
             } catch (SQLException ex) {
-                System.out.println("Error querying transactions by user id");
+                System.out.println(QUERY_ERROR);
             }
         }
         throw new ConnectionException();
@@ -77,7 +80,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     @Override
     public List<Transaction> getAllTransactionsByDate(Date date) {
         if (connection.isPresent()) {
-            String sql = "SELECT id, type, bank_id, sender_account_id, recipient_account_id, date_transaction, sum FROM transaction WHERE date_transaction = ?";
+            String sql = "SELECT id, t_type, bank_id, sender_account_id, recipient_account_id, date_transaction, sum FROM transaction WHERE date_transaction = ?";
             try (PreparedStatement ps = connection.get().prepareStatement(sql)) {
                 ps.setDate(1, new java.sql.Date(date.getTime()));
                 ResultSet rs = ps.executeQuery();
@@ -85,7 +88,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                 while (rs.next()) {
                     Transaction result = new Transaction();
                     result.setId(rs.getLong("id"));
-                    result.setType(TransactionType.valueOf(rs.getString("type")));
+                    result.setType(TransactionType.valueOf(rs.getString("t_type")));
                     result.setBankId(rs.getLong("bank_id"));
                     result.setSenderAccountId(rs.getLong("sender_account_id"));
                     result.setRecipientAccountId(rs.getLong("recipient_account_id"));
@@ -95,7 +98,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                 }
                 return transactions;
             } catch (SQLException ex) {
-                System.out.println("Error querying transactions by date");
+                System.out.println(QUERY_ERROR);
             }
         }
         throw new ConnectionException();
@@ -104,7 +107,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     @Override
     public Transaction create(Transaction transaction) {
         if (connection.isPresent()) {
-            String sql = "INSERT INTO transaction (type, bank_id, sender_account_id, recipient_account_id, date_transaction, sum) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO transaction (t_type, bank_id, sender_account_id, recipient_account_id, date_transaction, sum) VALUES (?, ?, ?, ?, ?, ?)";
             try (PreparedStatement ps = connection.get().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setString(1, transaction.getType().name());
                 ps.setLong(2, transaction.getBankId());
@@ -118,7 +121,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                     return findById(rs.getLong(1));
                 }
             } catch (SQLException ex) {
-                throw new EntityNotFoundException("Transaction not found");
+                throw new EntityNotFoundException(TRANSACTION_NOT_FOUND_MESSAGE);
             }
         }
         throw new ConnectionException();
@@ -127,7 +130,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     @Override
     public Transaction update(Transaction transaction) {
         if (connection.isPresent()) {
-            String sql = "UPDATE transaction SET type = ?, bank_id = ?, sender_account_id = ?, recipient_account_id = ?, date_transaction = ?, sum = ? WHERE id = ?";
+            String sql = "UPDATE transaction SET t_type = ?, bank_id = ?, sender_account_id = ?, recipient_account_id = ?, date_transaction = ?, sum = ? WHERE id = ?";
             try (PreparedStatement ps = connection.get().prepareStatement(sql)) {
                 ps.setString(1, transaction.getType().getName());
                 ps.setLong(2, transaction.getBankId());
@@ -139,7 +142,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                 ps.executeUpdate();
                 return findById(transaction.getId());
             } catch (SQLException ex) {
-                System.out.println("Error query");
+                System.out.println(QUERY_ERROR);
             }
         }
         throw new ConnectionException();
@@ -153,7 +156,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                 ps.setLong(1, id);
                 ps.executeUpdate();
             } catch (SQLException ex) {
-                System.out.println("Error query");
+                System.out.println(QUERY_ERROR);
             }
         }
     }

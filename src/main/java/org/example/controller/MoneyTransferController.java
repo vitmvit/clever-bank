@@ -23,20 +23,20 @@ public class MoneyTransferController extends HttpServlet {
         super.init(config);
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            StringBuffer jb = new StringBuffer();
-            String line = null;
+            StringBuffer stringBuffer = new StringBuffer();
+            String line;
             BufferedReader reader = request.getReader();
             while ((line = reader.readLine()) != null) {
-                jb.append(line);
+                stringBuffer.append(line);
             }
             ObjectMapper mapper = new ObjectMapper();
-            MoneyOperationDto bankCreateDto = mapper.readValue(jb.toString(), MoneyOperationDto.class);
+            MoneyOperationDto bankCreateDto = mapper.readValue(stringBuffer.toString(), MoneyOperationDto.class);
             accountService.moneyTransfer(bankCreateDto);
         } catch (Exception e) {
             PrintWriter out = response.getWriter();
-            out.print("Money transfer error!");
+            out.print("Money transfer error");
         }
     }
 }

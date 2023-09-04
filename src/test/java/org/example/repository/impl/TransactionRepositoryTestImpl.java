@@ -10,9 +10,9 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 
+import static org.example.model.constant.Constants.CONNECTION_EXCEPTION_MESSAGE;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TransactionRepositoryTestImpl implements TransactionRepositoryTest {
@@ -20,69 +20,80 @@ public class TransactionRepositoryTestImpl implements TransactionRepositoryTest 
     private final TransactionRepository transactionRepository = new TransactionRepositoryImpl();
 
     @Test
-    public void findByIdPositive() {
+    public void findByIdPositiveTest() {
         Transaction transaction = transactionRepository.create(getTransaction());
         Assertions.assertNotNull(transactionRepository.findById(transaction.getId()));
+
+        transactionRepository.delete(transaction.getId());
     }
 
     @Test
-    public void findByIdNegative() {
+    public void findByIdNegativeTest() {
         ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
             transactionRepository.findById(Long.MAX_VALUE);
         });
-        assertTrue(exception.getMessage().startsWith("Connection is lost"));
+        assertTrue(exception.getMessage().startsWith(CONNECTION_EXCEPTION_MESSAGE));
     }
 
     @Test
-    public void getAllTransactionsByUserIdPositive() {
-        List<Transaction> list = new ArrayList<>();
-        list.add(transactionRepository.create(getTransaction()));
-        list.add(transactionRepository.create(getTransaction()));
-        list.add(transactionRepository.create(getTransaction()));
-
-        List<Transaction> listResult = transactionRepository.getAllTransactionsByUserId(list.get(0).getSenderAccountId());
-
+    public void getAllTransactionsByUserIdPositiveTest() {
+        var list = List.of(
+                transactionRepository.create(getTransaction()),
+                transactionRepository.create(getTransaction()),
+                transactionRepository.create(getTransaction())
+        );
+        var accountId = list.get(0).getSenderAccountId();
+        var listResult = transactionRepository.getAllTransactionsByUserId(accountId);
         Assertions.assertEquals(list.size(), listResult.size());
+
+        for (Transaction transaction : listResult) {
+            transactionRepository.delete(transaction.getId());
+        }
     }
 
     @Test
-    public void getAllTransactionsByUserIdNegative() {
+    public void getAllTransactionsByUserIdNegativeTest() {
         Long id = Long.MAX_VALUE;
         List<Transaction> list = transactionRepository.getAllTransactionsByUserId(id);
         Assertions.assertEquals(0, list.size());
     }
 
     @Test
-    public void getAllTransactionsByDatePositive() {
-        List<Transaction> list = new ArrayList<>();
-        list.add(transactionRepository.create(getTransaction()));
-        list.add(transactionRepository.create(getTransaction()));
-        list.add(transactionRepository.create(getTransaction()));
+    public void getAllTransactionsByDatePositiveTest() {
+        var list = List.of(
+                transactionRepository.create(getTransaction()),
+                transactionRepository.create(getTransaction()),
+                transactionRepository.create(getTransaction())
+        );
 
         List<Transaction> listResult = transactionRepository.getAllTransactionsByDate(list.get(0).getDateTransaction());
-
         Assertions.assertEquals(list.size(), listResult.size());
+
+        for (Transaction transaction : listResult) {
+            transactionRepository.delete(transaction.getId());
+        }
     }
 
     @Test
-    public void getAllTransactionsByDateNegative() {
+    public void getAllTransactionsByDateNegativeTest() {
         Date date = new Date(1212121212121L);
         List<Transaction> list = transactionRepository.getAllTransactionsByDate(date);
         Assertions.assertEquals(0, list.size());
     }
 
     @Test
-    public void create() {
+    public void createTest() {
         Transaction transactionCreateDto = getTransaction();
         Transaction transactionResponseDto = transactionRepository.create(transactionCreateDto);
         Assertions.assertNotNull(transactionResponseDto.getId());
         Assertions.assertEquals(transactionCreateDto.getBankId(), transactionResponseDto.getBankId());
+
+        transactionRepository.delete(transactionResponseDto.getId());
     }
 
     @Test
-    public void update() {
+    public void updateTest() {
         Transaction saved = transactionRepository.create(getTransaction());
-
         Transaction transaction = new Transaction();
         transaction.setId(saved.getId());
         transaction.setType(saved.getType());
@@ -91,27 +102,28 @@ public class TransactionRepositoryTestImpl implements TransactionRepositoryTest 
         transaction.setRecipientAccountId(saved.getRecipientAccountId());
         transaction.setDateTransaction(saved.getDateTransaction());
         transaction.setSum(new BigDecimal(500));
-// TODO: 04.09.2023 пересмотреть transactionType
         Transaction updated = transactionRepository.update(transaction);
         Assertions.assertNotEquals(saved.getSum(), updated.getSum());
+
+        transactionRepository.delete(saved.getId());
     }
 
     @Test
-    public void delete() {
+    public void deleteTest() {
         Transaction saved = transactionRepository.create(getTransaction());
         transactionRepository.delete(saved.getId());
         ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
             transactionRepository.findById(saved.getId());
         });
-        Assertions.assertTrue(exception.getMessage().startsWith("Connection is lost"));
+        Assertions.assertTrue(exception.getMessage().startsWith(CONNECTION_EXCEPTION_MESSAGE));
     }
 
     private Transaction getTransaction() {
         Transaction transaction = new Transaction();
-        transaction.setType(TransactionType.TRANSFER);
-        transaction.setBankId(1l);
-        transaction.setSenderAccountId(2l);
-        transaction.setRecipientAccountId(3l);
+        transaction.setType(TransactionType.T);
+        transaction.setBankId(1L);
+        transaction.setSenderAccountId(2L);
+        transaction.setRecipientAccountId(3L);
         transaction.setDateTransaction(new Date(1212121212121L));
         transaction.setSum(new BigDecimal(200));
         return transaction;

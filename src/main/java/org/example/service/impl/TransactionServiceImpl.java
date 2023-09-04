@@ -14,6 +14,8 @@ import org.example.util.EntityUtils;
 import java.util.Date;
 import java.util.List;
 
+import static org.example.model.constant.Constants.REQUEST_EXCEPTION_MESSAGE;
+
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository = new TransactionRepositoryImpl();
@@ -40,7 +42,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionResponseDto create(MoneyOperationDto moneyOperationDto) {
         if (EntityUtils.isEmpty(moneyOperationDto.bankId()) || EntityUtils.isEmpty(moneyOperationDto.recipientAccountId()) || EntityUtils.isEmpty(moneyOperationDto.senderAccountId())) {
-            throw new RequestException("String is empty");
+            throw new RequestException(REQUEST_EXCEPTION_MESSAGE);
         }
         Transaction transaction = transactionConverter.convert(moneyOperationDto);
         Transaction saved = transactionRepository.create(transaction);
@@ -50,7 +52,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionResponseDto update(TransactionUpdateDto transactionUpdateDto) {
         if (EntityUtils.isEmpty(transactionUpdateDto.getBankId()) || EntityUtils.isEmpty(transactionUpdateDto.getRecipientAccountId()) || EntityUtils.isEmpty(transactionUpdateDto.getSenderAccountId())) {
-            throw new RequestException("String is empty");
+            throw new RequestException(REQUEST_EXCEPTION_MESSAGE);
         }
         Transaction transaction = transactionConverter.convert(transactionUpdateDto);
         Transaction saved = transactionRepository.update(transaction);

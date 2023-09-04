@@ -11,6 +11,8 @@ import org.example.repository.impl.BankRepositoryImpl;
 import org.example.service.BankService;
 import org.example.util.StringUtils;
 
+import static org.example.model.constant.Constants.REQUEST_EXCEPTION_MESSAGE;
+
 public class BankServiceImpl implements BankService {
 
     private final BankRepository bankRepository = new BankRepositoryImpl();
@@ -25,7 +27,7 @@ public class BankServiceImpl implements BankService {
     @Override
     public BankResponseDto create(BankCreateDto bankCreateDto) {
         if (StringUtils.isEmpty(bankCreateDto.name())) {
-            throw new RequestException("Name is empty");
+            throw new RequestException(REQUEST_EXCEPTION_MESSAGE);
         }
         Bank bank = bankConverter.convert(bankCreateDto);
         Bank saved = bankRepository.create(bank);
@@ -35,7 +37,7 @@ public class BankServiceImpl implements BankService {
     @Override
     public BankResponseDto update(BankUpdateDto bankUpdateDto) {
         if (StringUtils.isEmpty(bankUpdateDto.getName())) {
-            throw new RequestException("String is empty");
+            throw new RequestException(REQUEST_EXCEPTION_MESSAGE);
         }
         Bank bank = bankConverter.convert(bankUpdateDto);
         Bank saved = bankRepository.update(bank);

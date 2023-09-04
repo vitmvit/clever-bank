@@ -15,27 +15,29 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.sql.Date;
 
+import static org.example.model.constant.Constants.*;
+
 class AccountServiceTestImpl implements AccountServiceTest {
 
     private final AccountService accountService = new AccountServiceImpl();
     private final TransactionService transactionService = new TransactionServiceImpl();
 
     @Test
-    public void findByIdPositive() {
+    public void findByIdPositiveTest() {
         AccountResponseDto accountResponseDto = accountService.create(getAccount());
         Assertions.assertNotNull(accountService.findById(accountResponseDto.getId()));
     }
 
     @Test
-    public void findByIdNegative() {
+    public void findByIdNegativeTest() {
         ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
             accountService.findById(Long.MAX_VALUE);
         });
-        Assertions.assertTrue(exception.getMessage().startsWith("Connection is lost"));
+        Assertions.assertTrue(exception.getMessage().startsWith(CONNECTION_EXCEPTION_MESSAGE));
     }
 
     @Test
-    public void createPositive() {
+    public void createPositiveTest() {
         AccountCreateDto accountCreateDto = getAccount();
         AccountResponseDto accountResponseDto = accountService.create(accountCreateDto);
         Assertions.assertNotNull(accountResponseDto.getId());
@@ -43,16 +45,16 @@ class AccountServiceTestImpl implements AccountServiceTest {
     }
 
     @Test
-    public void createNegative() {
+    public void createNegativeTest() {
         AccountCreateDto accountCreateDto = new AccountCreateDto(null, null, new BigDecimal(3));
         RequestException exception = Assertions.assertThrows(RequestException.class, () -> {
             accountService.create(accountCreateDto);
         });
-        Assertions.assertTrue(exception.getMessage().startsWith("String is empty"));
+        Assertions.assertTrue(exception.getMessage().startsWith(REQUEST_EXCEPTION_MESSAGE));
     }
 
     @Test
-    public void updatePositive() {
+    public void updatePositiveTest() {
         AccountCreateDto accountCreateDto = getAccount();
 
         AccountResponseDto saved = accountService.create(accountCreateDto);
@@ -68,7 +70,7 @@ class AccountServiceTestImpl implements AccountServiceTest {
     }
 
     @Test
-    public void updateNegative() {
+    public void updateNegativeTest() {
         AccountUpdateDto account = new AccountUpdateDto();
         account.setId(null);
         account.setBankId(null);
@@ -78,21 +80,21 @@ class AccountServiceTestImpl implements AccountServiceTest {
         RequestException exception = Assertions.assertThrows(RequestException.class, () -> {
             accountService.update(account);
         });
-        Assertions.assertTrue(exception.getMessage().startsWith("String is empty"));
+        Assertions.assertTrue(exception.getMessage().startsWith(REQUEST_EXCEPTION_MESSAGE));
     }
 
     @Test
-    public void delete() {
+    public void deleteTest() {
         AccountResponseDto saved = accountService.create(getAccount());
         accountService.delete(saved.getId());
         ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
             accountService.findById(saved.getId());
         });
-        Assertions.assertTrue(exception.getMessage().startsWith("Connection is lost"));
+        Assertions.assertTrue(exception.getMessage().startsWith(CONNECTION_EXCEPTION_MESSAGE));
     }
 
     @Test
-    public void moneyTransferPositive() {
+    public void moneyTransferPositiveTest() {
         AccountCreateDto accountFrom = getAccount();
         AccountResponseDto accountFromSaved = accountService.create(accountFrom);
 
@@ -110,7 +112,7 @@ class AccountServiceTestImpl implements AccountServiceTest {
     }
 
     @Test
-    public void moneyTransferNegative() {
+    public void moneyTransferNegativeTest() {
         AccountCreateDto accountFrom = getAccount();
         AccountResponseDto accountFromSaved = accountService.create(accountFrom);
 
@@ -124,7 +126,7 @@ class AccountServiceTestImpl implements AccountServiceTest {
         RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () -> {
             accountService.moneyTransfer(transaction);
         });
-        Assertions.assertTrue(exception.getMessage().startsWith("Недостаточно средств на счете"));
+        Assertions.assertTrue(exception.getMessage().startsWith(INSUFFICIENT_FUNDS_MESSAGE));
     }
 
     private AccountCreateDto getAccount() {
