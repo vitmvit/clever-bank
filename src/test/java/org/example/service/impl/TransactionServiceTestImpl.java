@@ -43,40 +43,22 @@ class TransactionServiceTestImpl implements TransactionServiceTest {
 
     @Test
     public void getAllTransactionsByUserIdPositiveTest() {
-//        List<TransactionResponseDto> list = new ArrayList<>();
-//        list.add(transactionService.create(getTransaction()));
-//        list.add(transactionService.create(getTransaction()));
-//        list.add(transactionService.create(getTransaction()));
-//
-//        List<TransactionResponseDto> listResult = transactionService.getAllTransactionsByUserId(list.get(0).getSenderAccountId());
-//
-//        Assertions.assertEquals(list.size(), listResult.size());
+
     }
 
     @Test
     public void getAllTransactionsByUserIdNegativeTest() {
-//        Long id = Long.MAX_VALUE;
-//        List<TransactionResponseDto> list = transactionService.getAllTransactionsByUserId(id);
-//        Assertions.assertEquals(0, list.size());
+
     }
 
     @Test
     public void getAllTransactionsByDatePositiveTest() {
-//        List<TransactionResponseDto> list = new ArrayList<>();
-//        list.add(transactionService.create(getTransaction()));
-//        list.add(transactionService.create(getTransaction()));
-//        list.add(transactionService.create(getTransaction()));
-//
-//        List<TransactionResponseDto> listResult = transactionService.getAllTransactionsByDate(list.get(0).getDateTransaction());
-//
-//        Assertions.assertEquals(list.size(), listResult.size());
+
     }
 
     @Test
     public void getAllTransactionsByDateNegativeTest() {
-//        Date date = new Date(1212121212121L);
-//        List<TransactionResponseDto> list = transactionService.getAllTransactionsByDate(date);
-//        Assertions.assertEquals(0, list.size());
+
     }
 
     @Test
