@@ -91,7 +91,6 @@ public class UserServiceTestImpl implements UserServiceTest {
         doReturn(saved).when(userService).create(userCreateDto);
         doNothing().when(userService).delete(saved.getId());
         doThrow(new ConnectionException(CONNECTION_EXCEPTION_MESSAGE)).when(userService).findById(saved.getId());
-
         ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
             userService.findById(saved.getId());
         });
