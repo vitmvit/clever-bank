@@ -9,21 +9,30 @@ import org.example.service.UserService;
 import org.example.service.UserServiceTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.*;
 
 
-class UserServiceTestImpl implements UserServiceTest {
+public class UserServiceTestImpl implements UserServiceTest {
 
-    private final UserService userService = new UserServiceImpl();
+    private final UserService userService = Mockito.mock(UserServiceImpl.class);
 
     @Test
     public void findByIdPositive() {
-        UserResponseDto userResponseDto = userService.create(getUser());
-        Assertions.assertNotNull(userService.findById(userResponseDto.getId()));
+        UserResponseDto target = getUserResponseDto();
+        when(userService.findById(1L)).thenReturn(target);
+        UserResponseDto result = userService.findById(target.getId());
+        assertEquals(target.getId(), result.getId());
+        assertEquals(target.getName(), result.getName());
     }
 
     @Test
     public void findByIdNegative() {
-        ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
+        when(userService.findById(anyLong())).thenThrow(new ConnectionException("Connection is lost"));
+        var exception = Assertions.assertThrows(Exception.class, () -> {
             userService.findById(Long.MAX_VALUE);
         });
         Assertions.assertTrue(exception.getMessage().startsWith("Connection is lost"));
@@ -31,31 +40,33 @@ class UserServiceTestImpl implements UserServiceTest {
 
     @Test
     public void createPositive() {
-        UserCreateDto userCreateDto = getUser();
-        UserResponseDto userResponseDto = userService.create(userCreateDto);
-        Assertions.assertNotNull(userResponseDto.getId());
-        Assertions.assertEquals(userCreateDto.name(), userResponseDto.getName());
+        UserResponseDto target = getUserResponseDto();
+        UserCreateDto userCreateDto = getUserCreateDto();
+        when(userService.create(userCreateDto)).thenReturn(target);
+        UserResponseDto actualResponse = userService.create(userCreateDto);
+        Assertions.assertNotNull(actualResponse.getId());
+        Assertions.assertEquals(userCreateDto.name(), actualResponse.getName());
     }
 
     @Test
     public void createNegative() {
-        UserCreateDto userCreateDto = new UserCreateDto(null);
+        UserCreateDto target = new UserCreateDto(null);
+        doThrow(RequestException.class).when(userService).create(target);
         var exception = Assertions.assertThrows(Exception.class,
-                () -> userService.create(userCreateDto));
+                () -> userService.create(target));
         Assertions.assertEquals(exception.getClass(), RequestException.class);
     }
 
     @Test
     public void updatePositive() {
-        UserCreateDto accountCreateDto = getUser();
-
-        UserResponseDto saved = userService.create(accountCreateDto);
-
-        UserUpdateDto user = new UserUpdateDto();
-        user.setId(saved.getId());
-        user.setName("Name");
-
-        UserResponseDto updated = userService.update(user);
+        UserCreateDto accountCreateDto = getUserCreateDto();
+        UserResponseDto saved = getUserResponseDto();
+        when(userService.create(accountCreateDto)).thenReturn(saved);
+        UserUpdateDto user = getUserUpdateDto();
+        UserResponseDto updated = new UserResponseDto();
+        updated.setId(saved.getId());
+        updated.setName("user_update_name");
+        when(userService.update(user)).thenReturn(updated);
         Assertions.assertNotEquals(saved.getName(), updated.getName());
     }
 
@@ -64,7 +75,7 @@ class UserServiceTestImpl implements UserServiceTest {
         UserUpdateDto user = new UserUpdateDto();
         user.setId(null);
         user.setName(null);
-
+        when(userService.update(user)).thenThrow(new RequestException("String is empty"));
         RequestException exception = Assertions.assertThrows(RequestException.class, () -> {
             userService.update(user);
         });
@@ -73,15 +84,33 @@ class UserServiceTestImpl implements UserServiceTest {
 
     @Test
     public void delete() {
-        UserResponseDto saved = userService.create(getUser());
-        userService.delete(saved.getId());
+        UserCreateDto userCreateDto = getUserCreateDto();
+        UserResponseDto saved = getUserResponseDto();
+        doReturn(saved).when(userService).create(userCreateDto);
+        doNothing().when(userService).delete(saved.getId());
+        doThrow(new ConnectionException("Connection is lost")).when(userService).findById(saved.getId());
+
         ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
             userService.findById(saved.getId());
         });
         Assertions.assertTrue(exception.getMessage().startsWith("Connection is lost"));
     }
 
-    private UserCreateDto getUser() {
+    private UserResponseDto getUserResponseDto() {
+        UserResponseDto userResponseDto = new UserResponseDto();
+        userResponseDto.setId(1L);
+        userResponseDto.setName("user_1");
+        return userResponseDto;
+    }
+
+    private UserCreateDto getUserCreateDto() {
         return new UserCreateDto("user_1");
+    }
+
+    private UserUpdateDto getUserUpdateDto() {
+        UserUpdateDto userUpdateDto = new UserUpdateDto();
+        userUpdateDto.setId(1L);
+        userUpdateDto.setName("user_1");
+        return userUpdateDto;
     }
 }

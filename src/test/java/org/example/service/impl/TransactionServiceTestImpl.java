@@ -133,6 +133,6 @@ class TransactionServiceTestImpl implements TransactionServiceTest {
     }
 
     private MoneyOperationDto getTransaction() {
-        return new MoneyOperationDto(1l, 2l, 3l, (java.sql.Date) new Date(), new BigDecimal(200));
+        return new MoneyOperationDto(1L, 2L, 3L, (java.sql.Date) new Date(), new BigDecimal(200));
     }
 }
