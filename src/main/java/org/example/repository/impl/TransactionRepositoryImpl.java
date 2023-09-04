@@ -46,6 +46,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         throw new ConnectionException();
     }
 
+    // TODO: 61 строка
     @Override
     public List<Transaction> getAllTransactionsByUserId(Long id) {
         if (connection.isPresent()) {

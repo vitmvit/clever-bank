@@ -1,6 +1,7 @@
 package org.example.repository.impl;
 
 import org.example.exeption.ConnectionException;
+import org.example.model.constant.TransactionType;
 import org.example.model.entity.Account;
 import org.example.model.entity.Transaction;
 import org.example.repository.AccountRepository;
@@ -73,6 +74,7 @@ public class AccountRepositoryImplTest implements AccountRepositoryTest {
         Account accountToSaved = accountRepository.create(accountTo);
 
         Transaction transaction = new Transaction();
+        transaction.setType(TransactionType.TRANSFER);
         transaction.setBankId(1L);
         transaction.setSenderAccountId(accountFromSaved.getId());
         transaction.setRecipientAccountId(accountToSaved.getId());
@@ -80,6 +82,7 @@ public class AccountRepositoryImplTest implements AccountRepositoryTest {
         transaction.setSum(BigDecimal.valueOf(100));
         Transaction transactionSaved = transactionRepository.create(transaction);
 
+        // TODO: не создается transaction
         accountRepository.moneyTransfer(transactionSaved);
 
         Assertions.assertEquals(accountFrom.getBalance().subtract(new BigDecimal(100)), accountRepository.findById(accountFromSaved.getId()).getBalance());
@@ -95,6 +98,7 @@ public class AccountRepositoryImplTest implements AccountRepositoryTest {
         Account accountToSaved = accountRepository.create(accountTo);
 
         Transaction transaction = new Transaction();
+        transaction.setType(TransactionType.TRANSFER);
         transaction.setBankId(1L);
         transaction.setSenderAccountId(accountFromSaved.getId());
         transaction.setRecipientAccountId(accountToSaved.getId());

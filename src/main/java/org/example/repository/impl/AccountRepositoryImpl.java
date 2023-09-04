@@ -151,8 +151,8 @@ public class AccountRepositoryImpl implements AccountRepository {
         receipt.setSenderAccountId(transaction.getSenderAccountId());
         receipt.setRecipientAccountId(transaction.getRecipientAccountId());
         receipt.setSum(transaction.getSum());
-        receipt.setRecipientBankName(bankService.findById(accountFrom.getId()).getName());
-        receipt.setSenderBankName(bankService.findById(accountTo.getId()).getName());
+        receipt.setRecipientBankName(bankService.findById(accountFrom.getBankId()).getName());
+        receipt.setSenderBankName(bankService.findById(accountTo.getBankId()).getName());
 
         return receipt;
     }

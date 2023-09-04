@@ -1,6 +1,7 @@
 package org.example.repository.impl;
 
 import org.example.exeption.ConnectionException;
+import org.example.model.constant.TransactionType;
 import org.example.model.entity.Transaction;
 import org.example.repository.TransactionRepository;
 import org.example.repository.TransactionRepositoryTest;
@@ -84,12 +85,13 @@ public class TransactionRepositoryTestImpl implements TransactionRepositoryTest 
 
         Transaction transaction = new Transaction();
         transaction.setId(saved.getId());
+        transaction.setType(saved.getType());
         transaction.setBankId(saved.getBankId());
         transaction.setSenderAccountId(saved.getSenderAccountId());
         transaction.setRecipientAccountId(saved.getRecipientAccountId());
         transaction.setDateTransaction(saved.getDateTransaction());
         transaction.setSum(new BigDecimal(500));
-
+// TODO: 04.09.2023 пересмотреть transactionType
         Transaction updated = transactionRepository.update(transaction);
         Assertions.assertNotEquals(saved.getSum(), updated.getSum());
     }
@@ -106,6 +108,7 @@ public class TransactionRepositoryTestImpl implements TransactionRepositoryTest 
 
     private Transaction getTransaction() {
         Transaction transaction = new Transaction();
+        transaction.setType(TransactionType.TRANSFER);
         transaction.setBankId(1l);
         transaction.setSenderAccountId(2l);
         transaction.setRecipientAccountId(3l);

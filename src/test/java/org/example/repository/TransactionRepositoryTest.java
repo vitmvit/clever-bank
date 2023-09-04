@@ -12,6 +12,7 @@ public interface TransactionRepositoryTest {
     @Test
     void findByIdNegative();
 
+    // TODO: упал
     @Test
     void getAllTransactionsByUserIdPositive();
 
@@ -27,6 +28,7 @@ public interface TransactionRepositoryTest {
     @Test
     void create();
 
+    // TODO: упал
     @Test
     void update();
 
