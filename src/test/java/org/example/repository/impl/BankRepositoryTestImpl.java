@@ -7,6 +7,8 @@ import org.example.repository.BankRepositoryTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.example.model.constant.Constants.CONNECTION_EXCEPTION_MESSAGE;
+
 public class BankRepositoryTestImpl implements BankRepositoryTest {
 
     private final BankRepository bankRepository = new BankRepositoryImpl();
@@ -22,7 +24,7 @@ public class BankRepositoryTestImpl implements BankRepositoryTest {
         ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
             bankRepository.findById(Long.MAX_VALUE);
         });
-        Assertions.assertTrue(exception.getMessage().startsWith("Connection is lost"));
+        Assertions.assertTrue(exception.getMessage().startsWith(CONNECTION_EXCEPTION_MESSAGE));
     }
 
     @Test
@@ -52,7 +54,7 @@ public class BankRepositoryTestImpl implements BankRepositoryTest {
         ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
             bankRepository.findById(saved.getId());
         });
-        Assertions.assertTrue(exception.getMessage().startsWith("Connection is lost"));
+        Assertions.assertTrue(exception.getMessage().startsWith(CONNECTION_EXCEPTION_MESSAGE));
     }
 
     private Bank getBank() {
