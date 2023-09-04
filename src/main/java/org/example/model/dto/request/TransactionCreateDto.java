@@ -3,7 +3,7 @@ package org.example.model.dto.request;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public record MoneyOperationDto(
+public record TransactionCreateDto(
 
         Long bankId,
         Long senderAccountId,

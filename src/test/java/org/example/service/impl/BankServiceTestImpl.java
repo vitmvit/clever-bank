@@ -42,11 +42,11 @@ class BankServiceTestImpl implements BankServiceTest {
     @Test
     public void createPositiveTest() {
         BankResponseDto target = getBankResponseDto();
-        BankCreateDto userCreateDto = getBankCreateDto();
-        when(bankService.create(userCreateDto)).thenReturn(target);
-        BankResponseDto actualResponse = bankService.create(userCreateDto);
+        BankCreateDto bankCreateDto = getBankCreateDto();
+        when(bankService.create(bankCreateDto)).thenReturn(target);
+        BankResponseDto actualResponse = bankService.create(bankCreateDto);
         Assertions.assertNotNull(actualResponse.getId());
-        Assertions.assertEquals(userCreateDto.name(), actualResponse.getName());
+        Assertions.assertEquals(bankCreateDto.name(), actualResponse.getName());
     }
 
     @Test

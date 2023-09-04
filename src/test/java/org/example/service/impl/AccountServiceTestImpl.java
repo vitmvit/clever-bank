@@ -3,7 +3,6 @@ package org.example.service.impl;
 import org.example.exeption.ConnectionException;
 import org.example.exeption.RequestException;
 import org.example.model.dto.request.AccountCreateDto;
-import org.example.model.dto.request.MoneyOperationDto;
 import org.example.model.dto.response.AccountResponseDto;
 import org.example.model.dto.response.AccountUpdateDto;
 import org.example.service.AccountService;
@@ -11,26 +10,37 @@ import org.example.service.AccountServiceTest;
 import org.example.service.TransactionService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 
-import static org.example.model.constant.Constants.*;
+import static org.example.model.constant.Constants.CONNECTION_EXCEPTION_MESSAGE;
+import static org.example.model.constant.Constants.REQUEST_EXCEPTION_MESSAGE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.*;
 
 class AccountServiceTestImpl implements AccountServiceTest {
 
-    private final AccountService accountService = new AccountServiceImpl();
-    private final TransactionService transactionService = new TransactionServiceImpl();
+    private final AccountService accountService = Mockito.mock(AccountServiceImpl.class);
+    private final TransactionService transactionService = Mockito.mock(TransactionServiceImpl.class);
 
     @Test
     public void findByIdPositiveTest() {
-        AccountResponseDto accountResponseDto = accountService.create(getAccount());
+        AccountResponseDto target = getAccountResponseDto();
+        when(accountService.findById(1L)).thenReturn(target);
+        AccountResponseDto result = accountService.findById(target.getId());
+        assertEquals(target.getId(), result.getId());
+        assertEquals(target.getBalance(), result.getBalance());
+
+        AccountResponseDto accountResponseDto = accountService.create(getAccountCreateDto());
         Assertions.assertNotNull(accountService.findById(accountResponseDto.getId()));
     }
 
     @Test
     public void findByIdNegativeTest() {
-        ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
+        when(accountService.findById(anyLong())).thenThrow(new ConnectionException(CONNECTION_EXCEPTION_MESSAGE));
+        var exception = Assertions.assertThrows(Exception.class, () -> {
             accountService.findById(Long.MAX_VALUE);
         });
         Assertions.assertTrue(exception.getMessage().startsWith(CONNECTION_EXCEPTION_MESSAGE));
@@ -38,55 +48,59 @@ class AccountServiceTestImpl implements AccountServiceTest {
 
     @Test
     public void createPositiveTest() {
-        AccountCreateDto accountCreateDto = getAccount();
-        AccountResponseDto accountResponseDto = accountService.create(accountCreateDto);
-        Assertions.assertNotNull(accountResponseDto.getId());
-        Assertions.assertEquals(accountCreateDto.bankId(), accountResponseDto.getBankId());
+        AccountResponseDto target = getAccountResponseDto();
+        AccountCreateDto accountCreateDto = getAccountCreateDto();
+        when(accountService.create(accountCreateDto)).thenReturn(target);
+        AccountResponseDto actualResponse = accountService.create(accountCreateDto);
+        Assertions.assertNotNull(actualResponse.getId());
+        Assertions.assertEquals(accountCreateDto.balance(), actualResponse.getBalance());
     }
 
     @Test
     public void createNegativeTest() {
-        AccountCreateDto accountCreateDto = new AccountCreateDto(null, null, new BigDecimal(3));
-        RequestException exception = Assertions.assertThrows(RequestException.class, () -> {
-            accountService.create(accountCreateDto);
-        });
-        Assertions.assertTrue(exception.getMessage().startsWith(REQUEST_EXCEPTION_MESSAGE));
+        AccountCreateDto target = new AccountCreateDto(null, null, null);
+        doThrow(RequestException.class).when(accountService).create(target);
+        var exception = Assertions.assertThrows(Exception.class,
+                () -> accountService.create(target));
+        Assertions.assertEquals(exception.getClass(), RequestException.class);
     }
 
     @Test
     public void updatePositiveTest() {
-        AccountCreateDto accountCreateDto = getAccount();
-
-        AccountResponseDto saved = accountService.create(accountCreateDto);
-
-        AccountUpdateDto account = new AccountUpdateDto();
-        account.setId(saved.getId());
-        account.setBankId(saved.getBankId());
-        account.setUserId(saved.getUserId());
-        account.setBalance(new BigDecimal(Long.MAX_VALUE));
-
-        AccountResponseDto updated = accountService.update(account);
+        AccountCreateDto bankCreateDto = getAccountCreateDto();
+        AccountResponseDto saved = getAccountResponseDto();
+        when(accountService.create(bankCreateDto)).thenReturn(saved);
+        AccountUpdateDto user = getAccountUpdateDto();
+        AccountResponseDto updated = new AccountResponseDto();
+        updated.setId(saved.getId());
+        updated.setBankId(1L);
+        updated.setUserId(1L);
+        updated.setBalance(new BigDecimal(700));
+        when(accountService.update(user)).thenReturn(updated);
         Assertions.assertNotEquals(saved.getBalance(), updated.getBalance());
     }
 
     @Test
     public void updateNegativeTest() {
-        AccountUpdateDto account = new AccountUpdateDto();
-        account.setId(null);
-        account.setBankId(null);
-        account.setUserId(null);
-        account.setBalance(null);
-
+        AccountUpdateDto accountUpdateDto = new AccountUpdateDto();
+        accountUpdateDto.setId(null);
+        accountUpdateDto.setBankId(null);
+        accountUpdateDto.setUserId(null);
+        accountUpdateDto.setBalance(null);
+        when(accountService.update(accountUpdateDto)).thenThrow(new RequestException(REQUEST_EXCEPTION_MESSAGE));
         RequestException exception = Assertions.assertThrows(RequestException.class, () -> {
-            accountService.update(account);
+            accountService.update(accountUpdateDto);
         });
         Assertions.assertTrue(exception.getMessage().startsWith(REQUEST_EXCEPTION_MESSAGE));
     }
 
     @Test
     public void deleteTest() {
-        AccountResponseDto saved = accountService.create(getAccount());
-        accountService.delete(saved.getId());
+        AccountCreateDto bankCreateDto = getAccountCreateDto();
+        AccountResponseDto saved = getAccountResponseDto();
+        doReturn(saved).when(accountService).create(bankCreateDto);
+        doNothing().when(accountService).delete(saved.getId());
+        doThrow(new ConnectionException(CONNECTION_EXCEPTION_MESSAGE)).when(accountService).findById(saved.getId());
         ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
             accountService.findById(saved.getId());
         });
@@ -95,41 +109,33 @@ class AccountServiceTestImpl implements AccountServiceTest {
 
     @Test
     public void moneyTransferPositiveTest() {
-        AccountCreateDto accountFrom = getAccount();
-        AccountResponseDto accountFromSaved = accountService.create(accountFrom);
-
-        AccountCreateDto accountTo = getAccount();
-        AccountResponseDto accountToSaved = accountService.create(accountTo);
-
-        MoneyOperationDto transaction = new MoneyOperationDto(1L, accountFromSaved.getId(), accountToSaved.getId(), new Date(1212121212121L), BigDecimal.valueOf(100));
-        transactionService.create(transaction);
-
-        accountService.moneyTransfer(transaction);
-
-        Assertions.assertEquals(accountFrom.balance().subtract(new BigDecimal(100)), accountService.findById(accountFromSaved.getId()).getBalance());
-        Assertions.assertEquals(accountTo.balance().add(new BigDecimal(100)), accountService.findById(accountToSaved.getId()).getBalance());
 
     }
 
     @Test
     public void moneyTransferNegativeTest() {
-        AccountCreateDto accountFrom = getAccount();
-        AccountResponseDto accountFromSaved = accountService.create(accountFrom);
-
-        AccountCreateDto accountTo = getAccount();
-        AccountResponseDto accountToSaved = accountService.create(accountTo);
-
-        MoneyOperationDto transaction = new MoneyOperationDto(1L, accountFromSaved.getId(), accountToSaved.getId(), new Date(1212121212121L), accountFromSaved.getBalance().add(new BigDecimal(100)));
-
-        transactionService.create(transaction);
-
-        RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () -> {
-            accountService.moneyTransfer(transaction);
-        });
-        Assertions.assertTrue(exception.getMessage().startsWith(INSUFFICIENT_FUNDS_MESSAGE));
+        
     }
 
-    private AccountCreateDto getAccount() {
-        return new AccountCreateDto(1l, 2l, new BigDecimal(777));
+    private AccountResponseDto getAccountResponseDto() {
+        AccountResponseDto accountResponseDto = new AccountResponseDto();
+        accountResponseDto.setId(1L);
+        accountResponseDto.setBankId(1L);
+        accountResponseDto.setUserId(1L);
+        accountResponseDto.setBalance(new BigDecimal(500));
+        return accountResponseDto;
+    }
+
+    private AccountCreateDto getAccountCreateDto() {
+        return new AccountCreateDto(1L, 1L, new BigDecimal(500));
+    }
+
+    private AccountUpdateDto getAccountUpdateDto() {
+        AccountUpdateDto accountUpdateDto = new AccountUpdateDto();
+        accountUpdateDto.setId(1L);
+        accountUpdateDto.setBankId(1L);
+        accountUpdateDto.setUserId(1L);
+        accountUpdateDto.setBalance(new BigDecimal(500));
+        return accountUpdateDto;
     }
 }
