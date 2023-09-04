@@ -7,6 +7,8 @@ import org.example.repository.UserRepositoryTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.example.model.constant.Constants.CONNECTION_EXCEPTION_MESSAGE;
+
 public class UserRepositoryTestImpl implements UserRepositoryTest {
 
     private final UserRepository userRepository = new UserRepositoryImpl();
@@ -22,7 +24,7 @@ public class UserRepositoryTestImpl implements UserRepositoryTest {
         ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
             userRepository.findById(Long.MAX_VALUE);
         });
-        Assertions.assertTrue(exception.getMessage().startsWith("Connection is lost"));
+        Assertions.assertTrue(exception.getMessage().startsWith(CONNECTION_EXCEPTION_MESSAGE));
     }
 
     @Test
@@ -36,11 +38,9 @@ public class UserRepositoryTestImpl implements UserRepositoryTest {
     @Test
     public void update() {
         User saved = userRepository.create(getUser());
-
         User user = new User();
         user.setId(saved.getId());
-        user.setName("Name");
-
+        user.setName("User_1");
         User updated = userRepository.update(user);
         Assertions.assertNotEquals(saved.getName(), updated.getName());
     }
@@ -52,7 +52,7 @@ public class UserRepositoryTestImpl implements UserRepositoryTest {
         ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
             userRepository.findById(saved.getId());
         });
-        Assertions.assertTrue(exception.getMessage().startsWith("Connection is lost"));
+        Assertions.assertTrue(exception.getMessage().startsWith(CONNECTION_EXCEPTION_MESSAGE));
     }
 
     private User getUser() {

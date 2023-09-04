@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static org.example.model.constant.Constants.CONNECTION_EXCEPTION_MESSAGE;
+import static org.example.model.constant.Constants.REQUEST_EXCEPTION_MESSAGE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -31,11 +33,11 @@ public class UserServiceTestImpl implements UserServiceTest {
 
     @Test
     public void findByIdNegative() {
-        when(userService.findById(anyLong())).thenThrow(new ConnectionException("Connection is lost"));
+        when(userService.findById(anyLong())).thenThrow(new ConnectionException(CONNECTION_EXCEPTION_MESSAGE));
         var exception = Assertions.assertThrows(Exception.class, () -> {
             userService.findById(Long.MAX_VALUE);
         });
-        Assertions.assertTrue(exception.getMessage().startsWith("Connection is lost"));
+        Assertions.assertTrue(exception.getMessage().startsWith(CONNECTION_EXCEPTION_MESSAGE));
     }
 
     @Test
@@ -75,11 +77,11 @@ public class UserServiceTestImpl implements UserServiceTest {
         UserUpdateDto user = new UserUpdateDto();
         user.setId(null);
         user.setName(null);
-        when(userService.update(user)).thenThrow(new RequestException("String is empty"));
+        when(userService.update(user)).thenThrow(new RequestException(REQUEST_EXCEPTION_MESSAGE));
         RequestException exception = Assertions.assertThrows(RequestException.class, () -> {
             userService.update(user);
         });
-        Assertions.assertTrue(exception.getMessage().startsWith("String is empty"));
+        Assertions.assertTrue(exception.getMessage().startsWith(REQUEST_EXCEPTION_MESSAGE));
     }
 
     @Test
@@ -88,12 +90,12 @@ public class UserServiceTestImpl implements UserServiceTest {
         UserResponseDto saved = getUserResponseDto();
         doReturn(saved).when(userService).create(userCreateDto);
         doNothing().when(userService).delete(saved.getId());
-        doThrow(new ConnectionException("Connection is lost")).when(userService).findById(saved.getId());
+        doThrow(new ConnectionException(CONNECTION_EXCEPTION_MESSAGE)).when(userService).findById(saved.getId());
 
         ConnectionException exception = Assertions.assertThrows(ConnectionException.class, () -> {
             userService.findById(saved.getId());
         });
-        Assertions.assertTrue(exception.getMessage().startsWith("Connection is lost"));
+        Assertions.assertTrue(exception.getMessage().startsWith(CONNECTION_EXCEPTION_MESSAGE));
     }
 
     private UserResponseDto getUserResponseDto() {
