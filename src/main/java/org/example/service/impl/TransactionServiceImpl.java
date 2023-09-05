@@ -11,7 +11,7 @@ import org.example.repository.impl.TransactionRepositoryImpl;
 import org.example.service.TransactionService;
 import org.example.util.EntityUtils;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 import static org.example.model.constant.Constants.REQUEST_EXCEPTION_MESSAGE;

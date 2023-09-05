@@ -2,7 +2,7 @@ package org.example.repository;
 
 import org.example.model.entity.Transaction;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 public interface TransactionRepository {

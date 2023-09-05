@@ -2,6 +2,7 @@ package org.example.service.impl;
 
 import org.example.exeption.ConnectionException;
 import org.example.exeption.RequestException;
+import org.example.model.constant.TransactionType;
 import org.example.model.dto.request.MoneyOperationDto;
 import org.example.model.dto.response.TransactionResponseDto;
 import org.example.model.dto.response.TransactionUpdateDto;
@@ -12,7 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.example.model.constant.Constants.CONNECTION_EXCEPTION_MESSAGE;
 import static org.example.model.constant.Constants.REQUEST_EXCEPTION_MESSAGE;
@@ -43,22 +46,38 @@ class TransactionServiceTestImpl implements TransactionServiceTest {
 
     @Test
     public void getAllTransactionsByUserIdPositiveTest() {
-
+        List<TransactionResponseDto> list = List.of(
+                getTransactionResponseDto(),
+                getTransactionResponseDto(),
+                getTransactionResponseDto()
+        );
+        when(transactionService.getAllTransactionsByUserId(list.get(0).getId())).thenReturn(list);
     }
 
     @Test
     public void getAllTransactionsByUserIdNegativeTest() {
-
+        Long id = Long.MAX_VALUE;
+        List<TransactionResponseDto> list = new ArrayList<>();
+        when(transactionService.getAllTransactionsByUserId(id)).thenReturn(list);
+        Assertions.assertEquals(0, list.size());
     }
 
     @Test
     public void getAllTransactionsByDatePositiveTest() {
-
+        List<TransactionResponseDto> list = List.of(
+                getTransactionResponseDto(),
+                getTransactionResponseDto(),
+                getTransactionResponseDto()
+        );
+        when(transactionService.getAllTransactionsByUserId(list.get(0).getDateTransaction().getTime())).thenReturn(list);
     }
 
     @Test
     public void getAllTransactionsByDateNegativeTest() {
-
+        Date date = new java.sql.Date(1212121212121L);
+        List<TransactionResponseDto> list = new ArrayList<>();
+        when(transactionService.getAllTransactionsByDate(date)).thenReturn(list);
+        Assertions.assertEquals(0, list.size());
     }
 
     @Test
@@ -76,7 +95,7 @@ class TransactionServiceTestImpl implements TransactionServiceTest {
 
     @Test
     public void createNegativeTest() {
-        MoneyOperationDto target = new MoneyOperationDto(null, null, null, null, null);
+        MoneyOperationDto target = new MoneyOperationDto(null, null, null, null, null, null);
         doThrow(RequestException.class).when(transactionService).create(target);
         var exception = Assertions.assertThrows(Exception.class,
                 () -> transactionService.create(target));
@@ -132,6 +151,7 @@ class TransactionServiceTestImpl implements TransactionServiceTest {
     private TransactionResponseDto getTransactionResponseDto() {
         TransactionResponseDto transaction = new TransactionResponseDto();
         transaction.setId(1L);
+        transaction.setType(TransactionType.A);
         transaction.setBankId(1L);
         transaction.setSenderAccountId(2L);
         transaction.setRecipientAccountId(3L);
@@ -141,11 +161,12 @@ class TransactionServiceTestImpl implements TransactionServiceTest {
     }
 
     private MoneyOperationDto getTransactionCreateDto() {
-        return new MoneyOperationDto(1L, 2L, 3L, new Date(1212121212121L), new BigDecimal(200));
+        return new MoneyOperationDto(TransactionType.A, 1L, 2L, 3L, new Date(1212121212121L), new BigDecimal(200));
     }
 
     private TransactionUpdateDto getTransactionUpdateDto() {
         TransactionUpdateDto transaction = new TransactionUpdateDto();
+        transaction.setType(TransactionType.A);
         transaction.setBankId(1L);
         transaction.setSenderAccountId(2L);
         transaction.setRecipientAccountId(3L);

@@ -66,7 +66,7 @@ public class TransactionRepositoryTestImpl implements TransactionRepositoryTest 
                 transactionRepository.create(getTransaction())
         );
 
-        List<Transaction> listResult = transactionRepository.getAllTransactionsByDate(list.get(0).getDateTransaction());
+        List<Transaction> listResult = transactionRepository.getAllTransactionsByDate((Date) list.get(0).getDateTransaction());
         Assertions.assertEquals(list.size(), listResult.size());
 
         for (Transaction transaction : listResult) {
@@ -76,7 +76,7 @@ public class TransactionRepositoryTestImpl implements TransactionRepositoryTest 
 
     @Test
     public void getAllTransactionsByDateNegativeTest() {
-        Date date = new Date(1212121212121L);
+        Date date = new Date(Long.MAX_VALUE);
         List<Transaction> list = transactionRepository.getAllTransactionsByDate(date);
         Assertions.assertEquals(0, list.size());
     }
@@ -124,7 +124,7 @@ public class TransactionRepositoryTestImpl implements TransactionRepositoryTest 
         transaction.setBankId(1L);
         transaction.setSenderAccountId(2L);
         transaction.setRecipientAccountId(3L);
-        transaction.setDateTransaction(new Date(1212121212121L));
+        transaction.setDateTransaction(new Date(2017 - 01 - 13));
         transaction.setSum(new BigDecimal(200));
         return transaction;
     }

@@ -106,7 +106,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         update(accountTo);
         Receipt receipt = new Receipt();
         receipt.setNumber(transaction.getId());
-        receipt.setTypeTransaction("Внесение");
+        receipt.setTypeTransaction(DESPOSITING);
         receipt.setSenderAccountId(transaction.getSenderAccountId());
         receipt.setRecipientBankName(bankService.findById(accountTo.getBankId()).getName());
         receipt.setSum(transaction.getSum());
@@ -126,7 +126,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
         Receipt receipt = new Receipt();
         receipt.setNumber(transaction.getId());
-        receipt.setTypeTransaction("Изъятие");
+        receipt.setTypeTransaction(WITHDRAWAL);
         receipt.setSenderAccountId(transaction.getSenderAccountId());
         receipt.setSum(transaction.getSum());
         receipt.setRecipientBankName(bankService.findById(accountFrom.getId()).getName());
@@ -149,7 +149,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
         Receipt receipt = new Receipt();
         receipt.setNumber(transaction.getId());
-        receipt.setTypeTransaction("Перевод");
+        receipt.setTypeTransaction(TRANSFER);
         receipt.setSenderAccountId(transaction.getSenderAccountId());
         receipt.setRecipientAccountId(transaction.getRecipientAccountId());
         receipt.setSum(transaction.getSum());

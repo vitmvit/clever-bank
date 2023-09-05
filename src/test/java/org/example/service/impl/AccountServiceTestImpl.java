@@ -114,7 +114,7 @@ class AccountServiceTestImpl implements AccountServiceTest {
 
     @Test
     public void moneyTransferNegativeTest() {
-        
+
     }
 
     private AccountResponseDto getAccountResponseDto() {

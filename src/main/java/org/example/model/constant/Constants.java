@@ -9,4 +9,7 @@ public class Constants {
     public static String QUERY_ERROR = "Error query";
     public static String ACCOUNT_NOT_FOUND_MESSAGE = "Account not found";
     public static String TRANSACTION_NOT_FOUND_MESSAGE = "Transaction not found";
+    public static String TRANSFER = "Перевод";
+    public static String WITHDRAWAL = "Изъятие";
+    public static String DESPOSITING = "Снятие";
 }

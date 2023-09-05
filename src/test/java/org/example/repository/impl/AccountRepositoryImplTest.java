@@ -83,7 +83,7 @@ public class AccountRepositoryImplTest implements AccountRepositoryTest {
         transaction.setBankId(1L);
         transaction.setSenderAccountId(accountFromSaved.getId());
         transaction.setRecipientAccountId(accountToSaved.getId());
-        transaction.setDateTransaction(new Date(1212121212121L));
+        transaction.setDateTransaction(new Date(2017 - 01 - 13));
         transaction.setSum(BigDecimal.valueOf(100));
         Transaction transactionSaved = transactionRepository.create(transaction);
         accountRepository.moneyTransfer(transactionSaved);
@@ -106,7 +106,7 @@ public class AccountRepositoryImplTest implements AccountRepositoryTest {
         transaction.setBankId(1L);
         transaction.setSenderAccountId(accountFromSaved.getId());
         transaction.setRecipientAccountId(accountToSaved.getId());
-        transaction.setDateTransaction(new Date(1212121212121L));
+        transaction.setDateTransaction(new Date(2017 - 01 - 13));
         transaction.setSum(accountFromSaved.getBalance().add(new BigDecimal(100)));
         Transaction transactionSaved = transactionRepository.create(transaction);
         RuntimeException exception = Assertions.assertThrows(RuntimeException.class, () -> {

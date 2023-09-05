@@ -4,7 +4,7 @@ import org.example.model.dto.request.MoneyOperationDto;
 import org.example.model.dto.response.TransactionResponseDto;
 import org.example.model.dto.response.TransactionUpdateDto;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 public interface TransactionService {

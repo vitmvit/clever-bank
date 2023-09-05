@@ -2,6 +2,7 @@ package org.example.model.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.example.model.constant.TransactionType;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -12,6 +13,7 @@ public class TransactionResponseDto {
 
     private Long id;
     private Long bankId;
+    private TransactionType type;
     private Long senderAccountId;
     private Long recipientAccountId;
     private Date dateTransaction;

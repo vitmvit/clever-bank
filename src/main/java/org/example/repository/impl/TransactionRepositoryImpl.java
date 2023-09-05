@@ -9,7 +9,6 @@ import org.example.repository.TransactionRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +48,6 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         throw new ConnectionException();
     }
 
-    // TODO: 61 строка
     @Override
     public List<Transaction> getAllTransactionsByUserId(Long id) {
         if (connection.isPresent()) {
@@ -113,7 +111,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                 ps.setLong(2, transaction.getBankId());
                 ps.setLong(3, transaction.getSenderAccountId());
                 ps.setLong(4, transaction.getRecipientAccountId() == null ? 0 : transaction.getRecipientAccountId());
-                ps.setDate(5, new java.sql.Date(transaction.getDateTransaction().getTime()));
+                ps.setDate(5, new Date(transaction.getDateTransaction().getTime()));
                 ps.setBigDecimal(6, transaction.getSum());
                 ps.executeUpdate();
                 ResultSet rs = ps.getGeneratedKeys();
@@ -136,7 +134,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                 ps.setLong(2, transaction.getBankId());
                 ps.setLong(3, transaction.getSenderAccountId());
                 ps.setLong(4, transaction.getRecipientAccountId());
-                ps.setDate(5, new java.sql.Date(transaction.getDateTransaction().getTime()));
+                ps.setDate(5, new Date(transaction.getDateTransaction().getTime()));
                 ps.setBigDecimal(6, transaction.getSum());
                 ps.setLong(7, transaction.getId());
                 ps.executeUpdate();
